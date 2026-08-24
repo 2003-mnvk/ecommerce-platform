@@ -1,0 +1,92 @@
+Important architectural decision:
+server.js
+   ↓
+connectDB()
+   ↓
+app.js
+   ↓
+routes
+   ↓
+controllers
+   ↓
+services
+   ↓
+models
+   ↓
+MongoDB
+
+backend foundation:
+Request
+   ↓
+Express
+   ↓
+Route
+   ↓
+Controller
+   ↓
+asyncHandler
+   ↓
+Service
+   ↓
+Model
+   ↓
+MongoDB
+   ↓
+Error
+   ↓
+errorMiddleware
+   ↓
+Consistent Response
+
+
+REGISTER
+   ↓
+Validate input
+   ↓
+Hash password
+   ↓
+Create User
+   ↓
+Generate Access Token
+   ↓
+Generate Refresh Token
+   ↓
+Return tokens
+
+
+Authentication Flow:
+LOGIN
+   ↓
+Validate credentials
+   ↓
+Compare password
+   ↓
+Generate tokens
+   ↓
+Store refresh token
+   ↓
+Return access token
+
+
+PROTECTED REQUEST
+   ↓
+Authorization: Bearer <accessToken>
+   ↓
+Auth Middleware
+   ↓
+Verify JWT
+   ↓
+Attach user to req.user
+   ↓
+Controller
+
+
+ADMIN REQUEST
+   ↓
+Auth Middleware
+   ↓
+Role Middleware
+   ↓
+Check req.user.role
+   ↓
+Allow / Deny
