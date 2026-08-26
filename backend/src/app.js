@@ -9,6 +9,7 @@ import asyncHandler from "./utils/asyncHandler.js";
 import testRoutes from "./routes/testRoutes.js"
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js"
+import categoryRoutes from "./routes/categoryRoutes.js"
 const app = express();
 
 app.use(helmet());
@@ -29,6 +30,8 @@ app.get("/api/v1/health", (req, res) => {
 app.use("/api/v1/auth",authRoutes);
 
 app.use("/api/v1/users",userRoutes);
+
+app.use("/api/v1/categories",categoryRoutes);
 
 app.use(errorMiddleware);
 
