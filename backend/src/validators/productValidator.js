@@ -1,0 +1,146 @@
+import { z } from "zod";
+
+const imageSchema = z.object({
+  url: z
+    .string()
+    .trim()
+    .url("Image URL must be a valid URL"),
+
+  alt: z
+    .string()
+    .trim()
+    .max(
+      150,
+      "Image alt text cannot exceed 150 characters"
+    )
+    .optional(),
+});
+
+export const createProductSchema = z
+  .object({
+    body: z.object({
+      name: z
+        .string()
+        .trim()
+        .min(
+          3,
+          "Product name must contain at least 3 characters"
+        )
+        .max(
+          150,
+          "Product name cannot exceed 150 characters"
+        ),
+
+      slug: z
+        .string()
+        .trim()
+        .min(
+          3,
+          "Product slug must contain at least 3 characters"
+        )
+        .max(
+          160,
+          "Product slug cannot exceed 160 characters"
+        )
+        .regex(
+          /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+          "Slug must contain only lowercase letters, numbers and hyphens"
+        ),
+
+      description: z
+        .string()
+        .trim()
+        .min(
+          10,
+          "Product description must contain at least 10 characters"
+        )
+        .max(
+          5000,
+          "Product description cannot exceed 5000 characters"
+        ),
+
+      category: z
+        .string()
+        .regex(
+          /^[0-9a-fA-F]{24}$/,
+          "Invalid category ID"
+        ),
+
+      brand: z
+        .string()
+        .trim()
+        .max(
+          100,
+          "Brand cannot exceed 100 characters"
+        )
+        .optional(),
+
+      price: z
+        .number()
+        .min(
+          0,
+          "Price cannot be negative"
+        ),
+
+      compareAtPrice: z
+        .number()
+        .min(
+          0,
+          "Compare-at price cannot be negative"
+        )
+        .optional(),
+
+      stock: z
+        .number()
+        .int(
+          "Stock must be a whole number"
+        )
+        .min(
+          0,
+          "Stock cannot be negative"
+        ),
+
+      sku: z
+        .string()
+        .trim()
+        .min(
+          2,
+          "SKU must contain at least 2 characters"
+        )
+        .max(
+          50,
+          "SKU cannot exceed 50 characters"
+        )
+        .regex(
+          /^[a-zA-Z0-9-]+$/,
+          "SKU can contain only letters, numbers and hyphens"
+        ),
+
+      images: z
+        .array(imageSchema)
+        .max(
+          10,
+          "A product can have a maximum of 10 images"
+        )
+        .optional(),
+
+      specifications: z
+        .record(z.string())
+        .optional(),
+    }),
+  })
+  .refine(
+    (data) => {
+      const { price, compareAtPrice } = data.body;
+
+      return (
+        compareAtPrice === undefined ||
+        compareAtPrice >= price
+      );
+    },
+    {
+      message:
+        "Compare-at price must be greater than or equal to price",
+      path: ["body", "compareAtPrice"],
+    }
+  );

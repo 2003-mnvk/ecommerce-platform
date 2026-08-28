@@ -10,6 +10,7 @@ import testRoutes from "./routes/testRoutes.js"
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js"
 import categoryRoutes from "./routes/categoryRoutes.js"
+import productRoutes from "./routes/productRoutes.js";
 const app = express();
 
 app.use(helmet());
@@ -32,6 +33,8 @@ app.use("/api/v1/auth",authRoutes);
 app.use("/api/v1/users",userRoutes);
 
 app.use("/api/v1/categories",categoryRoutes);
+
+app.use("/api/v1/products",productRoutes)
 
 app.use(errorMiddleware);
 
