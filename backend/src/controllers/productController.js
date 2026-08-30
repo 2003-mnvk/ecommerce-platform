@@ -1,4 +1,4 @@
-import { createProduct } from "../services/productService.js";
+import { createProduct,getProducts } from "../services/productService.js";
 import ApiResponse from "../utils/ApiResponse.js";
 
 export const create = async(req,res) =>{
@@ -12,4 +12,16 @@ export const create = async(req,res) =>{
         )
     );
 };
+
+export const getAll = async(req,res) =>{
+    const result = await getProducts(req.validated.query);
+
+    res.status(200).json(
+        new ApiResponse(
+            200,
+            result,
+            "Products fetched successfully"
+        )
+    );
+}
 

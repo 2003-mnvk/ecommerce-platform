@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { optional, trim, z } from "zod";
 
 const imageSchema = z.object({
   url: z
@@ -144,3 +144,74 @@ export const createProductSchema = z
       path: ["body", "compareAtPrice"],
     }
   );
+
+
+export const getProductSchema = z.object({
+  query: z.object({
+    page: z.coerce
+            .number()
+            .int()
+            .min(1)
+            .default(1),
+    
+    limit: z.coerce
+            .number()
+            .int()
+            .min(1)
+            .max(100)
+            .default(10),
+    
+    search: z
+            .string()
+            .trim()
+            .optional(),
+
+    category: z
+            .string()
+            .regex(
+              /^[0-9a-fA-F]{24}$/,
+              "Invalid category ID"
+            )        
+            .optional(),
+    
+    minPrice: z.coerce
+            .number()
+            .min(0,"Minimum price cannot be negative")
+            .optional(),
+    
+    maxPrice: z.coerce
+            .number()
+            .min(0,"Maximum price cannot be negative")
+            .optional(),
+    
+    minRating: z.coerce
+            .number()
+            .min(0)
+            .max(5)
+            .optional(),
+    
+    sort: z
+            .enum(["name","price","ratings","createdAt",])
+            .default("createdAt"),
+    
+    order: z
+            .enum(["asc","desc"])
+            .default("desc"),
+  }),
+})
+.refine(
+  (data)=>{
+    const {minPrice,maxPrice} = data.query;
+
+    return(
+      minPrice === undefined ||
+      maxPrice === undefined ||
+      minPrice<=maxPrice
+    );
+  },
+  {
+    message:
+      "Minimum price cannot be greater than maximum price",
+    path:["query","minPrice"],
+  }
+);
