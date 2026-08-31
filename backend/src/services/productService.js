@@ -1,6 +1,7 @@
 import Product from "../models/Product.js";
 import Category from "../models/Category.js";
 import ApiError from "../utils/ApiError.js";
+import { th } from "zod/v4/locales";
 
 export const createProduct = async(productData,user) =>{
     const{
@@ -161,6 +162,75 @@ export const getProductById = async (productId) =>{
     if(!product){
         throw new ApiError(404,"No Product Found");
     }
+
+    return product;
+}
+
+
+export const updateProduct = async (
+    productId,
+    updateData,
+    user
+) => {
+    const product = await Product.findById(productId);
+
+    if(!product){
+        throw new ApiError(404,"Product not found");
+    }
+
+    //seller can only update their own products
+    if(user.role === "seller" && product.seller.toString() !== user._id.toString()){
+        throw new ApiError(403,"You are not allowed to update this product");
+    }
+
+    //check category if being updated
+    if(updateData.category){
+        const category = await Category.findById(updateData.category);
+
+        if(!category){
+            throw new ApiError(404,"Category not found");
+        }
+
+        if(!category.isActive){
+            throw new ApiError(400,"Category is inactive");
+        }
+    }
+
+    //check duplicate slug
+    if(updateData.slug){
+        const existingSlug = await Product.findOne({
+            slug:updateData.slug,
+            _id:{$ne:productId},
+        });
+
+        if(existingSlug){
+            throw new ApiError(409,"Product with this slug already exists");
+        }
+    }
+
+    //check duplicate sku
+    if(updateData.sku){
+        const existingSku = await Product.findOne({
+            sku:updateData.sku,
+            _id:{$ne:productId},
+        });
+
+        if(existingSku){
+            throw new ApiError(409,"Product with this SKU already exists");
+        }
+    }
+
+    //validate compareAt price
+    const newPrice = updateData.price !== undefined ? updateData.price : product.price;
+    const newCompareAtPrice = updateData.compareAtPrice !== undefined ? updateData.compareAtPrice : product.compareAtPrice;
+
+    if(newCompareAtPrice !== undefined && newCompareAtPrice < newPrice){
+        throw new ApiError(400,"Compare-at price must be greater than or equal to price");
+    }
+
+    Object.assign(product,updateData);
+
+    await product.save();
 
     return product;
 }

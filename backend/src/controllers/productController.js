@@ -1,4 +1,4 @@
-import { createProduct,getProducts, getProductById } from "../services/productService.js";
+import { createProduct,getProducts, getProductById, updateProduct } from "../services/productService.js";
 import ApiResponse from "../utils/ApiResponse.js";
 
 export const create = async(req,res) =>{
@@ -38,3 +38,19 @@ export const getById = async(req,res) => {
         )
     );
 };
+
+export const updateById = async(req,res) => {
+    const product = await updateProduct(
+        req.validated.params.id,
+        req.validated.body,
+        req.user
+    );
+
+    res.status(200).json(
+        new ApiResponse(
+            200,
+            product,
+            "Product updated successfully"
+        )
+    );
+}

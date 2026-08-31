@@ -1,10 +1,10 @@
 import express from "express";
-import { create,getAll, getById } from "../controllers/productController.js";
+import { create,getAll, getById, updateById } from "../controllers/productController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import roleMiddleware from "../middleware/roleMiddleware.js";
 import validate from "../middleware/validate.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import { createProductSchema,getProductSchema, getProductByIdSchema } from "../validators/productValidator.js";
+import { createProductSchema,getProductSchema, getProductByIdSchema, updateProductByIdSchema } from "../validators/productValidator.js";
 
 const router = express.Router();
 
@@ -28,4 +28,11 @@ router.get(
     asyncHandler(getById)
 )
 
+router.patch(
+    "/:id",
+    authMiddleware,
+    roleMiddleware("seller","admin"),
+    validate(updateProductByIdSchema),
+    asyncHandler(updateById)
+)
 export default router;
