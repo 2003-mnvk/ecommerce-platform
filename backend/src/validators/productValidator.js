@@ -215,3 +215,16 @@ export const getProductSchema = z.object({
     path:["query","minPrice"],
   }
 );
+
+
+export const getProductByIdSchema = z.object({
+  params: z.object({
+    id: z
+      .string()
+      .regex(
+        /^[0-9a-fA-F]{24}$/,
+        "Invalid product ID"
+      ),
+  }),
+});
+

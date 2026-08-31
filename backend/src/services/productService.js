@@ -149,3 +149,18 @@ export const getProducts = async({
     };
 };
 
+
+export const getProductById = async (productId) =>{
+    const product = await Product.findOne({
+        _id: productId,
+        isActive: true,
+    }) 
+        .populate("category","name slug description")
+        .populate("seller","name email")
+    
+    if(!product){
+        throw new ApiError(404,"No Product Found");
+    }
+
+    return product;
+}
