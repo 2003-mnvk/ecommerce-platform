@@ -366,4 +366,17 @@ export const updateProductByIdSchema = z.object({
         message: "At least one field is required for update",
       }
     ),
+});
+
+
+export const deleteProductByIdSchema = z.object({
+  params: z.object({
+    id: z
+      .string()
+      .regex(
+        /^[0-9a-fA-F]{24}$/,
+        "Invalid product ID"
+      ),
+  })
 })
+

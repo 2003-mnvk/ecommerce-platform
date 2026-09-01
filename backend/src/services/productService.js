@@ -234,3 +234,27 @@ export const updateProduct = async (
 
     return product;
 }
+
+export const deleteProduct = async (productId,user) =>{
+    const product = await Product.findById(productId);
+
+    if(!product){
+        throw new ApiError(404,"Product not found");
+    }
+
+    //seller can only delete their own products
+    if(user.role === "seller" && product.seller.toString() !== user._id.toString()){
+        throw new ApiError(403,"You are not allowed to delete this product");
+    }
+
+    //already inactive product
+    if(!product.isActive){
+        throw new ApiError(400,"Product is already inactive");
+    }
+
+    product.isActive = false;
+
+    await product.save();
+
+    return product;
+}
