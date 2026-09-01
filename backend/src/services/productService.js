@@ -258,3 +258,21 @@ export const deleteProduct = async (productId,user) =>{
 
     return product;
 }
+
+export const restoreProduct = async (productId,user) =>{
+    const product = await Product.findById(productId);
+
+    if(!product){
+        throw new ApiError(404,"Product not found");
+    }
+
+    if(product.isActive){
+        throw new ApiError(400,"Product is already active");
+    }
+
+    product.isActive = true;
+
+    await product.save();
+
+    return product;
+}

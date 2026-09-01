@@ -1,10 +1,24 @@
 import express from "express";
-import { create,getAll, getById, updateById, deleteById } from "../controllers/productController.js";
+import { 
+    create,
+    getAll, 
+    getById, 
+    updateById, 
+    deleteById, 
+    restoreById 
+} from "../controllers/productController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import roleMiddleware from "../middleware/roleMiddleware.js";
 import validate from "../middleware/validate.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import { createProductSchema,getProductSchema, getProductByIdSchema, updateProductByIdSchema, deleteProductByIdSchema } from "../validators/productValidator.js";
+import { 
+    createProductSchema,
+    getProductSchema, 
+    getProductByIdSchema, 
+    updateProductByIdSchema, 
+    deleteProductByIdSchema, 
+    restoreProductByIdSchema 
+} from "../validators/productValidator.js";
 
 const router = express.Router();
 
@@ -43,4 +57,12 @@ router.delete(
     validate(deleteProductByIdSchema),
     asyncHandler(deleteById)
 );
+
+router.patch(
+    "/:id/restore",
+    authMiddleware,
+    roleMiddleware("admin"),
+    validate(restoreProductByIdSchema),
+    asyncHandler(restoreById)
+)
 export default router;
