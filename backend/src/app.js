@@ -11,6 +11,7 @@ import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js"
 import categoryRoutes from "./routes/categoryRoutes.js"
 import productRoutes from "./routes/productRoutes.js";
+import reviewRoutes from "./routes/reviewRoutes.js";
 const app = express();
 
 app.use(helmet());
@@ -34,7 +35,9 @@ app.use("/api/v1/users",userRoutes);
 
 app.use("/api/v1/categories",categoryRoutes);
 
-app.use("/api/v1/products",productRoutes)
+app.use("/api/v1/products",productRoutes);
+
+app.use("/api/v1/reviews",reviewRoutes);
 
 app.use(errorMiddleware);
 
