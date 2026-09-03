@@ -4,12 +4,14 @@ import {
     getByProduct,
     update,
     remove,
+    moderate,
 } from '../controllers/reviewController.js';
 import { 
     createReviewSchema, 
     getProductReviewsSchema, 
     updateReviewSchema, 
-    deleteReviewSchema 
+    deleteReviewSchema ,
+    moderateReviewSchema,
 } from '../validators/reviewValidator.js';
 
 import authMiddleware from '../middleware/authMiddleware.js';
@@ -51,6 +53,15 @@ router.delete(
     roleMiddleware("customer","admin"),
     validate(deleteReviewSchema),
     asyncHandler(remove)
+);
+
+//moderate review - Admin only
+router.patch(
+    "/:id/moderate",
+    authMiddleware,
+    roleMiddleware("admin"),
+    validate(moderateReviewSchema),
+    asyncHandler(moderate)
 );
 
 export default router;

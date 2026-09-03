@@ -81,3 +81,13 @@ export const deleteReviewSchema = z.object({
         id: objectIdSchema,
     }),
 });
+
+export const moderateReviewSchema = z.object({
+    params: z.object({
+        id: objectIdSchema,
+    }),
+
+    body: z.object({
+        isApproved: z.boolean(),
+    }),
+})
